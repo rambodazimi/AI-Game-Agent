@@ -1,4 +1,9 @@
-# Student agent: Add your own agent here
+# Student agent
+
+# Authors:
+# Rambod Azimi
+# Matthew Spagnuolo
+ 
 from agents.agent import Agent
 from store import register_agent
 import sys
