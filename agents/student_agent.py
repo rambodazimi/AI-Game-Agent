@@ -50,8 +50,8 @@ def total_allowed_moves(chess_board, my_pos, adv_pos, max_step, allowed_dirs):
         return 1 + total_allowed_moves(chess_board, moves[allowed_dirs[0]], adv_pos, max_step-1, allowed_dirs) + total_allowed_moves(chess_board, moves[allowed_dirs[1]], adv_pos, max_step-1, allowed_dirs) + total_allowed_moves(chess_board, moves[allowed_dirs[2]], adv_pos, max_step-1, allowed_dirs) + total_allowed_moves(chess_board, moves[allowed_dirs[3]], adv_pos, max_step-1, allowed_dirs)
     else:
         return 0
-    
-
+        
+# consider walls!
 def manhattan_distance(my_pos, adv_pos):
     row_A, col_A = my_pos
     row_B, col_B = adv_pos
@@ -157,7 +157,7 @@ def calculate_score(chess_board, my_pos, adv_pos, max_step):
     normalized_heuristic_3 = min_max_normalize(heuristic_3, 1, chess_board.shape[0] * 2)
     normalized_heuristic_4 = min_max_normalize(heuristic_4, 0, chess_board.shape[0])
     normalized_heuristic_5 = min_max_normalize(heuristic_5, 0, chess_board.shape[0])
-    weights = [0.4, 0.2, 0.2, 0.1, 0.1]
+    weights = [0.4, 0.2, 0, 0.1, 0.1]
     total_score = normalized_heuristic_1 * weights[0] + normalized_heuristic_2 * weights[1] + normalized_heuristic_3 * weights[2] + normalized_heuristic_4 * weights[3] - normalized_heuristic_5 * weights[4]
 
     return total_score * 100
