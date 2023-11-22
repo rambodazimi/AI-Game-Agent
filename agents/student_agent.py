@@ -197,8 +197,34 @@ class StudentAgent(Agent):
         """
         start_time = time.time()
 
-        total_score = calculate_score(chess_board, my_pos, adv_pos, max_step)
-        print(f"TOTAL SCORE: {total_score:.2f}")
+        #total_score = calculate_score(chess_board, my_pos, adv_pos, max_step)
+        #print(f"TOTAL SCORE: {total_score:.2f}")
+
+
+        allowed_dirs, _ = number_of_allowed_dirs(chess_board, my_pos, adv_pos)
+
+        # trying every possible move, calculate the total score, choose move with the highest score
+        max_score = -1000
+        best_r = 0
+        best_c = 0
+        best_dir = 0
+        for step in range(max_step + 1): # try every possible number of steps
+            print("GOING TO FOR LOOP")
+            r, c = my_pos
+            if len(allowed_dirs) == 0:
+                # If no possible move, we must be enclosed by our Adversary
+                break
+            for dir in range(len(allowed_dirs)): # try every possible directions
+                m_r, m_c = moves[allowed_dirs[dir]]
+                #my_pos = (r + m_r, c + m_c)
+                total_score = calculate_score(chess_board, (r + m_r, c + m_c), adv_pos, step)
+                if(total_score > max_score):
+                    max_score = total_score
+                    best_r = r + m_r
+                    best_c = c + m_c
+                    best_dir = allowed_dirs[dir]
+
+        my_pos = (best_r, best_c)
 
         
 
@@ -206,4 +232,4 @@ class StudentAgent(Agent):
         print("My AI's turn took ", time_taken, "seconds.")
 
         # dummy return
-        return my_pos, self.dir_map["u"]
+        return my_pos, best_dir
