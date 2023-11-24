@@ -59,13 +59,13 @@ class StudentAgent(Agent):
         if(len(allowed_dirs) == 0):
             return 0
         elif(len(allowed_dirs) == 1):
-            return 1 + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[0]], adv_pos, max_step-1, allowed_dirs)
+            return 1 + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[0]][0], my_pos[1] + moves[allowed_dirs[0]][1]), adv_pos, max_step-1, allowed_dirs)
         elif(len(allowed_dirs) == 2):
-            return 1 + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[0]], adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[1]], adv_pos, max_step-1, allowed_dirs)
+            return 1 + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[0]][0], my_pos[1] + moves[allowed_dirs[0]][1]), adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[1]][0], my_pos[1] + moves[allowed_dirs[1]][1]), adv_pos, max_step-1, allowed_dirs)
         elif(len(allowed_dirs) == 3):
-            return 1 + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[0]], adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[1]], adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[2]], adv_pos, max_step-1, allowed_dirs)
+            return 1 + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[0]][0], my_pos[1] + moves[allowed_dirs[0]][1]), adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[1]][0], my_pos[1] + moves[allowed_dirs[1]][1]), adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[2]][0], my_pos[1] + moves[allowed_dirs[2]][1]), adv_pos, max_step-1, allowed_dirs)
         elif(len(allowed_dirs) == 4):
-            return 1 + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[0]], adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[1]], adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[2]], adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, moves[allowed_dirs[3]], adv_pos, max_step-1, allowed_dirs)
+            return 1 + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[0]][0], my_pos[1] + moves[allowed_dirs[0]][1]), adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[1]][0], my_pos[1] + moves[allowed_dirs[1]][1]), adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[2]][0], my_pos[1] + moves[allowed_dirs[2]][1]), adv_pos, max_step-1, allowed_dirs) + StudentAgent.total_allowed_moves(chess_board, (my_pos[0] + moves[allowed_dirs[3]][0], my_pos[1] + moves[allowed_dirs[3]][1]), adv_pos, max_step-1, allowed_dirs)
         else:
             return 0
     
@@ -211,6 +211,21 @@ class StudentAgent(Agent):
 
         return total_score * 100
     
+    @staticmethod
+    def choose_barrier(chess_board, my_pos, adv_pos, allowed_barriers):
+
+        # put a barrier that is closer to opponent's position
+        shortest = 1000
+        best_bar = -1000
+        for bar in range(len(allowed_barriers)):
+            location_x = my_pos[0] + moves[bar][0]
+            location_y = my_pos[1] + moves[bar][1]
+            distance = StudentAgent.manhattan_distance((location_x, location_y), adv_pos)
+            if(distance < shortest):
+                shortest = distance
+                best_bar = allowed_barriers[bar]
+        return best_bar
+
 
     def step(self, chess_board, my_pos, adv_pos, max_step):
         """
@@ -232,7 +247,6 @@ class StudentAgent(Agent):
         #total_score = calculate_score(chess_board, my_pos, adv_pos, max_step)
         #print(f"TOTAL SCORE: {total_score:.2f}")
         
-        
         # Before anything, check if we can trap the opponent in a 1X1 square, and if so, do it.
         if StudentAgent.adv_in_reach(chess_board, my_pos, adv_pos, max_step, my_pos):
             print("Adversary is in reach!")
@@ -245,7 +259,7 @@ class StudentAgent(Agent):
                 print("Adversary is surrounded by 3 walls, we can win!") 
                 # find our next move to trap the adversary
                 my_pos = (adv_pos[0] + moves[adv_open_dirs[0]][0], adv_pos[1] + moves[adv_open_dirs[0]][1])
-                if adv_open_dirs[0] <= 2:
+                if adv_open_dirs[0] < 2:
                     dir = adv_open_dirs[0] + 2
                 else:
                     dir = adv_open_dirs[0] - 2
@@ -255,31 +269,33 @@ class StudentAgent(Agent):
                 return my_pos, dir
 
 
-        allowed_dirs, _ = StudentAgent.number_of_allowed_dirs(chess_board, my_pos, adv_pos)
-
         # trying every possible move, calculate the total score, choose move with the highest score
         max_score = -1000
-        best_r = 0
-        best_c = 0
+        best_pos = (0, 0)
         best_dir = 0
-        for step in range(max_step + 1): # try every possible number of steps
+        for step in range(max_step): # try every possible number of steps
+
             r, c = my_pos
+
+            allowed_dirs, _ = StudentAgent.number_of_allowed_dirs(chess_board, my_pos, adv_pos)
+
             if len(allowed_dirs) == 0:
                 # If no possible move, we must be enclosed by our Adversary
                 break
             for dir in range(len(allowed_dirs)): # try every possible directions
                 m_r, m_c = moves[allowed_dirs[dir]]
-                #my_pos = (r + m_r, c + m_c)
-                total_score = StudentAgent.calculate_score(chess_board, (r + m_r, c + m_c), adv_pos, step)
+                my_pos = (r + m_r, c + m_c)
+                total_score = StudentAgent.calculate_score(chess_board, my_pos, adv_pos, step)
                 if(total_score > max_score):
                     max_score = total_score
-                    best_r = r + m_r
-                    best_c = c + m_c
-                    best_dir = allowed_dirs[dir]
+                    best_pos = my_pos
                     
 
-        my_pos = (best_r, best_c)
+        my_pos = best_pos
+        allowed_barriers = [i for i in range(0,4) if not chess_board[my_pos[0], my_pos[1], i]]
+        best_dir = StudentAgent.choose_barrier(chess_board, my_pos, adv_pos, allowed_barriers)
 
+        best_dir = allowed_barriers[np.random.randint(0, len(allowed_barriers))]
         time_taken = time.time() - start_time
         print("My AI's turn took ", time_taken, "seconds.")
         return my_pos, best_dir
