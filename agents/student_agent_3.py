@@ -180,6 +180,45 @@ class StudentAgent3(Agent):
 
         return total_score * 100
     
+    @staticmethod
+    def find_best_dir(chess_board, my_pos, adv_pos, allowed_dirs, max_step):
+        
+        # Default to the first allowed direction
+        best_dir = allowed_dirs[0]
+
+        # If there is only one allowed direction, return it
+        if len(allowed_dirs) == 1:
+            return best_dir
+        
+        # Check if adversary is in reach        
+        allowed_moves = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [], [])
+        adv_in_reach,_,_ = StudentAgent3.adv_in_reach(chess_board, adv_pos, allowed_moves)
+
+        if not adv_in_reach:
+            # We are not in reach! Try to maximize our moves
+            max_moves = 0
+            for dir in allowed_dirs:
+                # Find all the possible moves we can make after placing a wall in this direction
+                moves_list = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [], [dir])
+                moves = len(moves_list)
+                if moves > max_moves:
+                    max_moves = moves
+                    best_dir = dir
+                    
+            return best_dir
+        
+        else:
+            # We are close! Try to minimize opponent moves
+            min_moves = 100000
+            for dir in allowed_dirs:
+                # Find all the possible moves adv can make after placing a wall in this direction
+                moves_list = StudentAgent3.find_allowed_moves(chess_board, adv_pos, my_pos, max_step, [], [dir])
+                moves = len(moves_list)
+                if moves < min_moves:
+                    min_moves = moves
+                    best_dir = dir
+                    
+            return best_dir
     
 
     def step(self, chess_board, my_pos, adv_pos, max_step):
@@ -242,9 +281,7 @@ class StudentAgent3(Agent):
         # Find the best direction to put a wall
         allowed_dirs, _ = StudentAgent3.find_allowed_dirs(chess_board, best_move, adv_pos)
         
-        
-        # For now, pick a random direction
-        best_dir = allowed_dirs[np.random.randint(0, len(allowed_dirs))]
+        best_dir = StudentAgent3.find_best_dir(chess_board, best_move, adv_pos, allowed_dirs, max_step)
 
         time_taken = time.time() - start_time
         print("My AI's turn took ", time_taken, "seconds.")
