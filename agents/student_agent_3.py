@@ -47,7 +47,7 @@ class StudentAgent3(Agent):
         return allowed_dirs, len(allowed_dirs)
     
     @staticmethod
-    def find_allowed_moves(chess_board, my_pos, adv_pos, max_step, allowed_move_list, omit_start_dirs):
+    def find_allowed_moves(chess_board, my_pos, adv_pos, max_step, allowed_move_list):
         """
         This method uses recursion to examine all the possible moves that student agent can go and returns the list of all possible moves
         """
@@ -64,11 +64,10 @@ class StudentAgent3(Agent):
         
         r, c = my_pos
         for d in allowed_dirs:
-            if d not in omit_start_dirs:
-                m_r, m_c = moves[d]
-                new_pos = (r + m_r, c + m_c)
-                allowed_move_list = StudentAgent3.find_allowed_moves(chess_board, new_pos, adv_pos, max_step-1, allowed_move_list, [])
-            
+            m_r, m_c = moves[d]
+            new_pos = (r + m_r, c + m_c)
+            allowed_move_list = StudentAgent3.find_allowed_moves(chess_board, new_pos, adv_pos, max_step-1, allowed_move_list)
+        
         return allowed_move_list
     
     @staticmethod
@@ -167,7 +166,7 @@ class StudentAgent3(Agent):
         """
         _, heuristic_1 = StudentAgent3.find_allowed_dirs(chess_board, pos, adv_pos)
         
-        heuristic_2 = len(StudentAgent3.find_allowed_moves(chess_board, pos, adv_pos, max_step, [], []))
+        heuristic_2 = len(StudentAgent3.find_allowed_moves(chess_board, pos, adv_pos, max_step, []))
 
         heuristic_3,_ = StudentAgent3.distance_from_nearest_corner(chess_board, pos, adv_pos)
 
@@ -189,36 +188,20 @@ class StudentAgent3(Agent):
         # If there is only one allowed direction, return it
         if len(allowed_dirs) == 1:
             return best_dir
-        
-        # Check if adversary is in reach        
-        allowed_moves = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [], [])
-        adv_in_reach,_,_ = StudentAgent3.adv_in_reach(chess_board, adv_pos, allowed_moves)
 
-        if not adv_in_reach:
-            # We are not in reach! Try to maximize our moves
-            max_moves = 0
-            for dir in allowed_dirs:
-                # Find all the possible moves we can make after placing a wall in this direction
-                moves_list = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [], [dir])
-                moves = len(moves_list)
-                if moves > max_moves:
-                    max_moves = moves
-                    best_dir = dir
-                    
-            return best_dir
+        max_score = -1000
+        for dir in allowed_dirs:
+            chess_board_tmp = deepcopy(chess_board)
+            chess_board_tmp[my_pos[0], my_pos[1], dir] = True # Put a wall in the direction we are considering
+            our_moves = StudentAgent3.find_allowed_moves(chess_board_tmp, my_pos, adv_pos, max_step, [])
+            opponent_moves = StudentAgent3.find_allowed_moves(chess_board_tmp, adv_pos, my_pos, max_step, [])
+            score = len(our_moves) - len(opponent_moves)
+            if score > max_score:
+                max_score = score
+                best_dir = dir
+                
+        return best_dir
         
-        else:
-            # We are close! Try to minimize opponent moves
-            min_moves = 100000
-            for dir in allowed_dirs:
-                # Find all the possible moves adv can make after placing a wall in this direction
-                moves_list = StudentAgent3.find_allowed_moves(chess_board, adv_pos, my_pos, max_step, [], [dir])
-                moves = len(moves_list)
-                if moves < min_moves:
-                    min_moves = moves
-                    best_dir = dir
-                    
-            return best_dir
     
 
     def step(self, chess_board, my_pos, adv_pos, max_step):
@@ -239,7 +222,7 @@ class StudentAgent3(Agent):
         start_time = time.time()
         
         # Find all the possible moves we can make
-        allowed_moves = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [], [])
+        allowed_moves = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [])
         
         # Before anything, check if we can trap the opponent in a 1X1 square, and if so, do it.
         adv_in_reach, move, dir = StudentAgent3.adv_in_reach(chess_board, adv_pos, allowed_moves)
