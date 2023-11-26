@@ -79,7 +79,7 @@ class StudentAgent(Agent):
         return abs(row_A - row_B) + abs(col_A - col_B)
     
     @staticmethod  
-    def adv_in_reach(chess_board, my_pos, adv_pos, max_step, allowed_moves):
+    def adv_in_reach(chess_board, adv_pos, allowed_moves):
         """
         Check if the opponent's square has at least one reachable side from us, if so, it returns the move we need to make.
         """
@@ -203,7 +203,7 @@ class StudentAgent(Agent):
         allowed_moves = StudentAgent.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [], [])
         
         # Before anything, check if we can trap the opponent in a 1X1 square, and if so, do it.
-        adv_in_reach, move, dir = StudentAgent.adv_in_reach(chess_board, my_pos, adv_pos, max_step, allowed_moves)
+        adv_in_reach, move, dir = StudentAgent.adv_in_reach(chess_board, adv_pos, allowed_moves)
         
         if adv_in_reach:
             adv_open_dirs = []
