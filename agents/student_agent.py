@@ -198,16 +198,16 @@ import time
 moves = ((-1, 0), (0, 1), (1, 0), (0, -1))
       
       
-@register_agent("student_agent3")
-class StudentAgent3(Agent):
+@register_agent("student_agent")
+class StudentAgent(Agent):
     """
     A dummy class for your implementation. Feel free to use this class to
     add any helper functionalities needed for your agent.
     """
 
     def __init__(self):
-        super(StudentAgent3, self).__init__()
-        self.name = "StudentAgent3"
+        super(StudentAgent, self).__init__()
+        self.name = "StudentAgent"
         self.dir_map = {
             "u": 0,
             "r": 1,
@@ -242,13 +242,13 @@ class StudentAgent3(Agent):
             return allowed_move_list
         
         # Recursive case: (still have steps to take)
-        allowed_dirs, _ = StudentAgent3.find_allowed_dirs(chess_board, my_pos, adv_pos)
+        allowed_dirs, _ = StudentAgent.find_allowed_dirs(chess_board, my_pos, adv_pos)
         
         r, c = my_pos
         for d in allowed_dirs:
             m_r, m_c = moves[d]
             new_pos = (r + m_r, c + m_c)
-            allowed_move_list = StudentAgent3.find_allowed_moves(chess_board, new_pos, adv_pos, max_step-1, allowed_move_list)
+            allowed_move_list = StudentAgent.find_allowed_moves(chess_board, new_pos, adv_pos, max_step-1, allowed_move_list)
         
         return allowed_move_list
     
@@ -293,33 +293,33 @@ class StudentAgent3(Agent):
         if(x_A < mid):
             if(y_A < mid):
                 # top left
-                distance_A = StudentAgent3.manhattan_distance(top_left_corner, my_pos)
+                distance_A = StudentAgent.manhattan_distance(top_left_corner, my_pos)
             else:
                 # top right
-                distance_A = StudentAgent3.manhattan_distance(top_right_corner, my_pos)
+                distance_A = StudentAgent.manhattan_distance(top_right_corner, my_pos)
         else:
             if(y_A < mid):
                 # bottom left
-                distance_A = StudentAgent3.manhattan_distance(bottom_left_corner, my_pos)
+                distance_A = StudentAgent.manhattan_distance(bottom_left_corner, my_pos)
             else:
                 # bottom right
-                distance_A = StudentAgent3.manhattan_distance(bottom_right_corner, my_pos)
+                distance_A = StudentAgent.manhattan_distance(bottom_right_corner, my_pos)
 
         # random agent
         if(x_B < mid):
             if(y_B < mid):
                 # top left
-                distance_B = StudentAgent3.manhattan_distance(top_left_corner, adv_pos)
+                distance_B = StudentAgent.manhattan_distance(top_left_corner, adv_pos)
             else:
                 # top right
-                distance_B = StudentAgent3.manhattan_distance(top_right_corner, adv_pos)
+                distance_B = StudentAgent.manhattan_distance(top_right_corner, adv_pos)
         else:
             if(y_B < mid):
                 # bottom left
-                distance_B = StudentAgent3.manhattan_distance(bottom_left_corner, adv_pos)
+                distance_B = StudentAgent.manhattan_distance(bottom_left_corner, adv_pos)
             else:
                 # bottom right
-                distance_B = StudentAgent3.manhattan_distance(bottom_right_corner, adv_pos)
+                distance_B = StudentAgent.manhattan_distance(bottom_right_corner, adv_pos)
 
         return distance_A, distance_B
 
@@ -346,16 +346,16 @@ class StudentAgent3(Agent):
         Finally, we apply min max normalization technique and choose weights to prioritize some heuristics and return the final score
         (For example, number of allowed directions seems to be more important than the distance from the opponent; thus, we consider a higher weight for that) 
         """
-        _, heuristic_1 = StudentAgent3.find_allowed_dirs(chess_board, pos, adv_pos)
+        _, heuristic_1 = StudentAgent.find_allowed_dirs(chess_board, pos, adv_pos)
         
-        heuristic_2 = len(StudentAgent3.find_allowed_moves(chess_board, pos, adv_pos, max_step, []))
+        heuristic_2 = len(StudentAgent.find_allowed_moves(chess_board, pos, adv_pos, max_step, []))
 
-        heuristic_3,_ = StudentAgent3.distance_from_nearest_corner(chess_board, pos, adv_pos)
+        heuristic_3,_ = StudentAgent.distance_from_nearest_corner(chess_board, pos, adv_pos)
 
         # calculating the total score #####
-        normalized_heuristic_1 = StudentAgent3.min_max_normalize(heuristic_1, 0, 4)
-        normalized_heuristic_2 = StudentAgent3.min_max_normalize(heuristic_2, 0, chess_board.shape[0] ** 2)
-        normalized_heuristic_3 = StudentAgent3.min_max_normalize(heuristic_3, 0, chess_board.shape[0])
+        normalized_heuristic_1 = StudentAgent.min_max_normalize(heuristic_1, 0, 4)
+        normalized_heuristic_2 = StudentAgent.min_max_normalize(heuristic_2, 0, chess_board.shape[0] ** 2)
+        normalized_heuristic_3 = StudentAgent.min_max_normalize(heuristic_3, 0, chess_board.shape[0])
         weights = [0.5, 0.3, 0.2]
         total_score = normalized_heuristic_1 * weights[0] + normalized_heuristic_2 * weights[1] + normalized_heuristic_3 * weights[2]
 
@@ -375,8 +375,8 @@ class StudentAgent3(Agent):
         for dir in allowed_dirs:
             chess_board_tmp = deepcopy(chess_board)
             chess_board_tmp[my_pos[0], my_pos[1], dir] = True # Put a wall in the direction we are considering
-            our_moves = StudentAgent3.find_allowed_moves(chess_board_tmp, my_pos, adv_pos, max_step, [])
-            opponent_moves = StudentAgent3.find_allowed_moves(chess_board_tmp, adv_pos, my_pos, max_step, [])
+            our_moves = StudentAgent.find_allowed_moves(chess_board_tmp, my_pos, adv_pos, max_step, [])
+            opponent_moves = StudentAgent.find_allowed_moves(chess_board_tmp, adv_pos, my_pos, max_step, [])
             score = len(our_moves) - len(opponent_moves)
             if score > max_score:
                 max_score = score
@@ -404,10 +404,10 @@ class StudentAgent3(Agent):
         start_time = time.time()
         
         # Find all the possible moves we can make
-        allowed_moves = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [])
+        allowed_moves = StudentAgent.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [])
         
         # Before anything, check if we can trap the opponent in a 1X1 square, and if so, do it.
-        adv_in_reach, move, dir = StudentAgent3.adv_in_reach(chess_board, adv_pos, allowed_moves)
+        adv_in_reach, move, dir = StudentAgent.adv_in_reach(chess_board, adv_pos, allowed_moves)
         
         if adv_in_reach:
             adv_open_dirs = []
@@ -427,9 +427,9 @@ class StudentAgent3(Agent):
         best_move_score = -1000
         runner_up_score = -1000
         for move in allowed_moves:
-            score = StudentAgent3.calculate_score(chess_board, move, adv_pos, max_step)
+            score = StudentAgent.calculate_score(chess_board, move, adv_pos, max_step)
             if score > best_move_score:
-                _, allowed_dirs_nb = StudentAgent3.find_allowed_dirs(chess_board, move, adv_pos)
+                _, allowed_dirs_nb = StudentAgent.find_allowed_dirs(chess_board, move, adv_pos)
                 
                 # Avoid trapping ourselves or putting ourselves in a corner, unless we have no other choice
                 if allowed_dirs_nb >= 3:
@@ -444,9 +444,9 @@ class StudentAgent3(Agent):
             best_move = runner_up_move
 
         # Find the best direction to put a wall
-        allowed_dirs, _ = StudentAgent3.find_allowed_dirs(chess_board, best_move, adv_pos)
+        allowed_dirs, _ = StudentAgent.find_allowed_dirs(chess_board, best_move, adv_pos)
         
-        best_dir = StudentAgent3.find_best_dir(chess_board, best_move, adv_pos, allowed_dirs, max_step)
+        best_dir = StudentAgent.find_best_dir(chess_board, best_move, adv_pos, allowed_dirs, max_step)
 
         time_taken = time.time() - start_time
         print("My AI's turn took ", time_taken, "seconds.")
