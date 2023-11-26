@@ -1,8 +1,8 @@
-# Student agent
+# Student Agent
 
 # Authors:
-# Rambod Azimi
-# Matthew Spagnuolo
+# Rambod Azimi 260911967
+# Matthew Spagnuolo 261048256
  
 from agents.agent import Agent
 from store import register_agent
@@ -11,17 +11,11 @@ import numpy as np
 from copy import deepcopy
 import time
 
-
 # Moves (Up, Right, Down, Left)
 moves = ((-1, 0), (0, 1), (1, 0), (0, -1))
-      
-      
+          
 @register_agent("student_agent3")
 class StudentAgent3(Agent):
-    """
-    A dummy class for your implementation. Feel free to use this class to
-    add any helper functionalities needed for your agent.
-    """
 
     def __init__(self):
         super(StudentAgent3, self).__init__()
@@ -72,6 +66,9 @@ class StudentAgent3(Agent):
     
     @staticmethod
     def manhattan_distance(my_pos, adv_pos):
+        """
+        This method simply calculates the distance between the player and it opponent withou considering walls in between
+        """
         row_A, col_A = my_pos
         row_B, col_B = adv_pos
 
@@ -181,7 +178,11 @@ class StudentAgent3(Agent):
     
     @staticmethod
     def find_best_dir(chess_board, my_pos, adv_pos, allowed_dirs, max_step):
-        
+        """
+        This method uses a heuristic to find the best place to put the barrier
+        The heuristic will calculate the total allowed moves for both the student agent and opponent
+        And tries to choose a barrier to maximize the first one and minimuze the second one
+        """
         # Default to the first allowed direction
         best_dir = allowed_dirs[0]
 
@@ -202,24 +203,11 @@ class StudentAgent3(Agent):
                 
         return best_dir
         
-    
-
     def step(self, chess_board, my_pos, adv_pos, max_step):
         """
-        Implement the step function of your agent here.
-        You can use the following variables to access the chess board:
-        - chess_board: a numpy array of shape (x_max, y_max, 4)
-        - my_pos: a tuple of (x, y)
-        - adv_pos: a tuple of (x, y)
-        - max_step: an integer
-
-        You should return a tuple of ((x, y), dir),
-        where (x, y) is the next position of your agent and dir is the direction of the wall
-        you want to put on.
-
-        Please check the sample implementation in agents/random_agent.py or agents/human_agent.py for more details.
+        Step function of the agent
         """
-        start_time = time.time()
+        start_time = time.time() # start the timer
         
         # Find all the possible moves we can make
         allowed_moves = StudentAgent3.find_allowed_moves(chess_board, my_pos, adv_pos, max_step, [])
@@ -261,9 +249,9 @@ class StudentAgent3(Agent):
         if best_move_score == -1000:  # If no moves prevent us from being easily trapped next turn, we take the runner up best move
             best_move = runner_up_move
 
-        # Find the best direction to put a wall
         allowed_dirs, _ = StudentAgent3.find_allowed_dirs(chess_board, best_move, adv_pos)
-        
+
+        # Find the best direction to put a wall
         best_dir = StudentAgent3.find_best_dir(chess_board, best_move, adv_pos, allowed_dirs, max_step)
 
         time_taken = time.time() - start_time
