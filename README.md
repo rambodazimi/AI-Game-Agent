@@ -11,7 +11,7 @@
 <img src="https://i.ibb.co/nDhpyK4/Screenshot-2023-11-28-at-11-26-09-PM.png">
 
 **4. PlayerA: student_agent3 | PlayerB: student_agent | number of games played: 1000**
-
+<img src="https://i.ibb.co/fx6RBCp/Screenshot-2023-11-28-at-11-47-22-PM.png">
 
 ## Project Description & Template: https://www.overleaf.com/read/vnygbjryrxrt#7b70cb
 
