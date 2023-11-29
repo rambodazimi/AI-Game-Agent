@@ -2,7 +2,7 @@
 
 ## Testing
 **1. PlayerA: student_agent, PlayerB: random_agent, number of games played: 1000**
-
+<img src ="https://i.ibb.co/zQrkScP/Screenshot-2023-11-28-at-11-01-57-PM.png">
 **2. PlayerA: random_agent, PlayerB: student_agent, number of games played: 1000**
 
 **3. PlayerA: student_agent, PlayerB: student_agent3, number of games played: 1000**
