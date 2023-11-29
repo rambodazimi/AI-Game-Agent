@@ -10,7 +10,7 @@
 **4. PlayerA: student_agent3, PlayerB: student_agent, number of games played: 1000**
 
 
-**Project Description & Template** : https://www.overleaf.com/read/vnygbjryrxrt#7b70cb
+## Project Description & Template: https://www.overleaf.com/read/vnygbjryrxrt#7b70cb
 
 <p align="center">
   <img src="https://cdn.britannica.com/36/162636-050-932C5D49/Colosseum-Rome-Italy.jpg?w=690&h=388&c=crop">
