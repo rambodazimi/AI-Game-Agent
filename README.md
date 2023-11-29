@@ -1,7 +1,7 @@
 # Colosseum Survival!
 
 ## Testing
-
+**1. Player1: student_agent, Player2: random_agent, number of games played: 1000**
 
 
 **Project Description & Template** : https://www.overleaf.com/read/vnygbjryrxrt#7b70cb
