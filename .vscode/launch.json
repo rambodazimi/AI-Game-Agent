@@ -11,7 +11,7 @@
             "request": "launch",
             "program": "simulator.py",
             "args": [
-                "--player_1", "human_agent", "--player_2", "student_agent", "--display"
+                "--player_1", "random_agent", "--player_2", "student_agent4", "--display"
             ],
             "console": "integratedTerminal",
             "justMyCode": true
