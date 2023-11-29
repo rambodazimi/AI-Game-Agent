@@ -1,13 +1,13 @@
 # Colosseum Survival!
 
 ## Testing
-**1. Player1: student_agent, Player2: random_agent, number of games played: 1000**
+**1. PlayerA: student_agent, PlayerB: random_agent, number of games played: 1000**
 
-**2. Player1: random_agent, Player2: student_agent, number of games played: 1000**
+**2. PlayerA: random_agent, PlayerB: student_agent, number of games played: 1000**
 
-**3. Player1: student_agent, Player2: student_agent3, number of games played: 1000**
+**3. PlayerA: student_agent, PlayerB: student_agent3, number of games played: 1000**
 
-**4. Player1: student_agent3, Player2: student_agent, number of games played: 1000**
+**4. PlayerA: student_agent3, PlayerB: student_agent, number of games played: 1000**
 
 
 **Project Description & Template** : https://www.overleaf.com/read/vnygbjryrxrt#7b70cb
