@@ -8,6 +8,7 @@
 <img src="https://i.ibb.co/PNX0MmM/Screenshot-2023-11-28-at-11-07-43-PM.png">
 
 **3. PlayerA: student_agent | PlayerB: student_agent3 | number of games played: 1000**
+<img src="https://i.ibb.co/nDhpyK4/Screenshot-2023-11-28-at-11-26-09-PM.png">
 
 **4. PlayerA: student_agent3 | PlayerB: student_agent | number of games played: 1000**
 
